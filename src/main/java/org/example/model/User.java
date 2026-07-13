@@ -9,6 +9,8 @@ import lombok.Setter;
 
 
 @Entity
+@Setter
+@Getter
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // ou JOINED
 @DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
