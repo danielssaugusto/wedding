@@ -1,42 +1,31 @@
 package org.example.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.example.dto.CreateGuestsListRequest;
 import org.example.model.Admin;
-import org.example.model.GuestsList;
 import org.example.service.AdminService;
 import org.example.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admins")
+@RequiredArgsConstructor
 public class AdminController {
 
     private final AdminService adminService;
-    private final UserService userService;
 
-    public AdminController(
-            AdminService adminService,
-            UserService userService
-    ) {
-        this.adminService = adminService;
-        this.userService = userService;
+    // Endpoint para criar um Admin enviando os dados no corpo da requisição (JSON)
+    @PostMapping
+    public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
+        Admin novoAdmin = adminService.createAdmin(admin);
+        return new ResponseEntity<>(novoAdmin, HttpStatus.CREATED);
     }
 
-    @PostMapping("/lists")
-    public GuestsList createList(@RequestBody CreateGuestsListRequest request) {
-        return adminService.createList(
-                request.getListName(),
-                request.getIdsGuests()
-        );
-    }
-
-    @PostMapping("/register")
-    public void registerAdmin(@RequestBody Admin admin) {
-        userService.registerUser(admin);
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        return "AdminController funcionando!";
+    // Endpoint para buscar um Admin pelo ID na URL (ex: /api/admins/1)
+    @GetMapping("/{id}")
+    public ResponseEntity<Admin> getAdminById(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.findById(id));
     }
 }

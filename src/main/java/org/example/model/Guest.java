@@ -1,9 +1,6 @@
 package org.example.model;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,20 +15,20 @@ import lombok.Setter;
 @Setter
 @Getter
 @DiscriminatorValue("GUEST")
-public class Guest extends User {
+public class Guest {
     @Enumerated(EnumType.STRING)
     private RSVPStatus status;
 
-    public Guest() {
-        super(null, null, null, null);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String fullName;
+
+    public Guest(Long id, String fullName) {
+        this.id = id;
+        this.fullName = fullName;
     }
 
-
-    public Guest(Long id, String fullName, String email, String password) {
-        super(id, fullName, email, password);
-    }
-
-    @Override
     public Role getRole() {
         return Role.GUEST;
     }

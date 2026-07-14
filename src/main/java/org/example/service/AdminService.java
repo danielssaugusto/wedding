@@ -1,35 +1,50 @@
 package org.example.service;
 
-import org.example.model.Guest;
-import org.example.model.GuestsList;
-import org.example.repository.GuestRepository;
-import org.example.repository.GuestsListRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.example.model.Admin;
+import org.example.repository.AdminRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Scanner;
 
 @Service
 public class AdminService {
+    Scanner sc = new Scanner(System.in);
+    AdminRepository adminRepository;
 
-    private final GuestsListRepository guestsListRepository;
-    private final GuestRepository guestRepository;
+    public Admin createAdmin(Admin admin) {
+        if (adminRepository.existsByEmail(admin.getEmail())) {
+            throw new IllegalArgumentException("Email already exists!");
+        }
 
-    public AdminService(
-            GuestsListRepository guestsListRepository,
-            GuestRepository guestRepository
-    ) {
-        this.guestsListRepository = guestsListRepository;
-        this.guestRepository = guestRepository;
+        if (admin.getPassword() != null) {
+            admin.setPassword(admin.getPassword());
+        }
+
+        return adminRepository.save(admin);
     }
 
-    public GuestsList createList(String listName, List<Long> idsGuests) {
+    public List<Admin> findAll() {
+        return adminRepository.findAll();
+    }
 
-        GuestsList list = new GuestsList();
-        list.setListName(listName);
+    public Admin findById(Long id) {
+        return adminRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found!"));
+    }
 
-        List<Guest> guests = guestRepository.findAllById(idsGuests);
-        list.setGuests(guests);
+    public Admin updateAdmin(Long id, Admin adminDetails) {
+        Admin existingAdmin = findById(id);
 
-        return guestsListRepository.save(list);
+        existingAdmin.setFullName(adminDetails.getFullName());
+        existingAdmin.setEmail(adminDetails.getEmail());
+
+        return adminRepository.save(existingAdmin);
+    }
+
+    public void deleteAdmin(Long id) {
+        Admin admin = findById(id);
+        adminRepository.delete(admin);
     }
 }
