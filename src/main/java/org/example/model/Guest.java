@@ -17,7 +17,7 @@ import lombok.Setter;
 @DiscriminatorValue("GUEST")
 public class Guest {
     @Enumerated(EnumType.STRING)
-    private RSVPStatus status;
+    private RSVPStatus status = RSVPStatus.PENDING;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +31,9 @@ public class Guest {
 
     public Role getRole() {
         return Role.GUEST;
+    }
+
+    public void setStatus(RSVPStatus status) {
+        this.status = status;
     }
 }
